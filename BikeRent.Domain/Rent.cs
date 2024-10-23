@@ -20,4 +20,8 @@ public class Rent
     /// End of the rent
     /// </summary>
     public required DateTime End { get; set; }
+    /// <summary>
+    /// Rent id
+    /// </summary>
+    public required int Id { get; set; }
 }
