@@ -1,7 +1,6 @@
-﻿
-namespace BikeRent.Domain.Repositories;
+﻿namespace BikeRent.Domain.Repositories;
 
-public class BukeTypeRepository : IRepository<BikeType, int>
+public class BikeTypeRepository : IRepository<BikeType, int>
 {
     private readonly List<BikeType> _bikeTypes = [];
     public bool Delete(int id)

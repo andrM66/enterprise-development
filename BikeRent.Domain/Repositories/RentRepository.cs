@@ -1,5 +1,4 @@
-﻿
-namespace BikeRent.Domain.Repositories;
+﻿namespace BikeRent.Domain.Repositories;
 
 public class RentRepository : IRepository<Rent, int>
 {

@@ -1,12 +1,17 @@
+using BikeRent.Domain;
+using BikeRent.Domain.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddSingleton<IRepository<Bike, int>, BikeRepository>();
+builder.Services.AddSingleton<IRepository<Client, int>, ClientRepository>();
+builder.Services.AddSingleton<IRepository<BikeType, int>, BikeTypeRepository>();
+builder.Services.AddSingleton<IRepository<Rent, int>, RentRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

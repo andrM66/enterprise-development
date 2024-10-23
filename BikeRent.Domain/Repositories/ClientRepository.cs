@@ -1,6 +1,4 @@
-﻿using Nest;
-
-namespace BikeRent.Domain.Repositories;
+﻿namespace BikeRent.Domain.Repositories;
 
 public class ClientRepository : IRepository<Client, int>
 {
