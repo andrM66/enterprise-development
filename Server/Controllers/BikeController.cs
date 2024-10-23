@@ -11,15 +11,25 @@ namespace Server.Controllers;
 [ApiController]
 public class BikeController(IRepository<Bike, int> repository, IMapper mapper) : ControllerBase
 {
-    // GET: api/<ValuesController>
+    /// <summary>
+    /// Get all objects
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public ActionResult<IEnumerable<Bike>> Get() => Ok(repository.GetAll());
 
-    // GET api/<ValuesController>/5
+    /// <summary>
+    /// Get sertain object
+    /// </summary>
+    /// <param name="id"> object's id</param>
+    /// <returns></returns>
     [HttpGet("{id}")]
     public ActionResult<Bike> Get(int id) => Ok(repository.GetById(id));
 
-    // POST api/<ValuesController>
+    /// <summary>
+    /// Post object
+    /// </summary>
+    /// <param name="value">object's dto</param>
     [HttpPost]
     public IActionResult Post([FromBody] BikeDto value)
     {
@@ -28,7 +38,12 @@ public class BikeController(IRepository<Bike, int> repository, IMapper mapper) :
         return Ok();
     }
 
-    // PUT api/<ValuesController>/5
+    /// <summary>
+    /// Update sertain object
+    /// </summary>
+    /// <param name="value">object's dto</param>
+    /// <param name="id">object's id</param>
+    /// <returns></returns>
     [HttpPut("{id}")]
     public ActionResult Put(int id, [FromBody] BikeDto value)
     {
@@ -40,7 +55,11 @@ public class BikeController(IRepository<Bike, int> repository, IMapper mapper) :
         return Ok();
     }
 
-    // DELETE api/<ValuesController>/5
+    /// <summary>
+    /// Delete sertain object
+    /// </summary>
+    /// <param name="id"> object's id</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {

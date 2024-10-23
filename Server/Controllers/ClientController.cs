@@ -10,15 +10,25 @@ namespace Server.Controllers;
 [ApiController]
 public class ClientController(IRepository<Client, int> repository, IMapper mapper) : ControllerBase
 {
-    // GET: api/<ClientController>
+    /// <summary>
+    /// Get all objects
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public ActionResult<IEnumerable<Client>> Get() => Ok(repository.GetAll());
 
-    // GET api/<ClientController>/5
+    /// <summary>
+    /// Get sertain object
+    /// </summary>
+    /// <param name="id"> object's id</param>
+    /// <returns></returns>
     [HttpGet("{id}")]
     public ActionResult<Client> Get(int id) => Ok(repository.GetById(id));
 
-    // POST api/<ClientController>
+    /// <summary>
+    /// Post object
+    /// </summary>
+    /// <param name="value">object's dto</param>
     [HttpPost]
     public IActionResult Post([FromBody] ClientDto value)
     {
@@ -27,7 +37,12 @@ public class ClientController(IRepository<Client, int> repository, IMapper mappe
         return Ok();
     }
 
-    // PUT api/<ClientController>/5
+    /// <summary>
+    /// Update sertain object
+    /// </summary>
+    /// <param name="value">object's dto</param>
+    /// <param name="id">object's id</param>
+    /// <returns></returns>
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] ClientDto value)
     {
@@ -39,7 +54,11 @@ public class ClientController(IRepository<Client, int> repository, IMapper mappe
         return Ok();
     }
 
-    // DELETE api/<ClientController>/5
+    /// <summary>
+    /// Delete sertain object
+    /// </summary>
+    /// <param name="id"> object's id</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
