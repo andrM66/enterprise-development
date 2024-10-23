@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BikeRent.Domain;
 using BikeRent.Domain.Repositories;
+using Server.Dto;
+using AutoMapper;
 
 namespace Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ClientController(IRepository<Client, int> repository) : ControllerBase
+public class ClientController(IRepository<Client, int> repository, IMapper mapper) : ControllerBase
 {
     // GET: api/<ClientController>
     [HttpGet]
@@ -18,17 +20,19 @@ public class ClientController(IRepository<Client, int> repository) : ControllerB
 
     // POST api/<ClientController>
     [HttpPost]
-    public IActionResult Post([FromBody] Client value)
+    public IActionResult Post([FromBody] ClientDto value)
     {
-        repository.Post(value);
+        var client = mapper.Map<Client>(value);
+        repository.Post(client);
         return Ok();
     }
 
     // PUT api/<ClientController>/5
     [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] Client value)
+    public IActionResult Put(int id, [FromBody] ClientDto value)
     {
-        if(!repository.Put(value, id))
+        var client = mapper.Map<Client>(value);
+        if(!repository.Put(client, id))
         {
             return NotFound();
         }

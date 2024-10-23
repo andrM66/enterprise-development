@@ -12,6 +12,7 @@ builder.Services.AddSingleton<IRepository<Bike, int>, BikeRepository>();
 builder.Services.AddSingleton<IRepository<Client, int>, ClientRepository>();
 builder.Services.AddSingleton<IRepository<BikeType, int>, BikeTypeRepository>();
 builder.Services.AddSingleton<IRepository<Rent, int>, RentRepository>();
+builder.Services.AddAutoMapper(typeof(Server.Mapping));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
