@@ -1,9 +1,39 @@
-﻿namespace BikeRent.Domain.Repositories;
-internal interface BikeTypeRepository
+﻿
+namespace BikeRent.Domain.Repositories;
+
+public class BukeTypeRepository : IRepository<BikeType, int>
 {
-    public IEnumerable<BikeType> GetBikeTypes();
-    public BikeType? GetBikeType(int id);
-    public void PostBikeType(BikeType bikeType);
-    public bool PutBikeType(int id, BikeType bikeType);
-    public bool DeleteBikeType(int id);
+    private readonly List<BikeType> _bikeTypes = [];
+    public bool Delete(int id)
+    {
+        var bikeType = GetById(id);
+        if (bikeType == null)
+        {
+            return false;
+        }
+        _bikeTypes.Remove(bikeType);
+        return true;
+    }
+
+    public IEnumerable<BikeType> GetAll() => _bikeTypes;
+
+    public BikeType? GetById(int id) => _bikeTypes.Find(x => x.Id == id);
+
+    public void Post(BikeType entity)
+    {
+        entity.Id = _bikeTypes.Count;
+        _bikeTypes.Add(entity);
+    }
+
+    public bool Put(BikeType entity, int id)
+    {
+        var oldValue = GetById(id);
+        if(oldValue == null)
+        {
+            return false;
+        }
+        oldValue.Name = entity.Name;
+        oldValue.Price = entity.Price;
+        return true;
+    }
 }

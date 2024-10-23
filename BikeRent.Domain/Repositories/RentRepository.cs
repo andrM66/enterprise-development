@@ -1,10 +1,41 @@
-﻿namespace BikeRent.Domain.Repositories;
+﻿
+namespace BikeRent.Domain.Repositories;
 
-internal interface RentRepository
+public class RentRepository : IRepository<Rent, int>
 {
-    public IEnumerable<Rent> GetRents();
-    public Rent? GetRent(int id);
-    public bool DeleteRent(int id);
-    public void PostRent(Rent rent);
-    public bool PutRent(int id, Rent rent);
+    private readonly List<Rent> _rents = [];
+    public bool Delete(int id)
+    {
+        var rent = GetById(id);
+        if(rent == null)
+        {
+            return false;
+        }
+        _rents.Remove(rent);
+        return true;
+    }
+
+    public IEnumerable<Rent> GetAll() => _rents;
+
+    public Rent? GetById(int id) => _rents.Find(x => x.Id == id);
+
+    public void Post(Rent entity)
+    {
+        entity.Id = _rents.Count;
+        _rents.Add(entity);
+    }
+
+    public bool Put(Rent entity, int id)
+    {
+        var oldValue = GetById(id);
+        if (oldValue == null)
+        {
+            return false;
+        }
+        oldValue.ClientId = entity.ClientId;
+        oldValue.BikeId = entity.BikeId;
+        oldValue.Begin = entity.Begin;
+        oldValue.End = entity.End;
+        return true;
+    }
 }
