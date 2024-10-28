@@ -4,18 +4,19 @@ using BikeRent.Domain.Repositories;
 using AutoMapper;
 using Server.Dto;
 
+
 namespace Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RentController(IRepository<Rent, int> repository, IRepository<Client, int> clientRepository, IRepository<Bike, int> bikeRepository, IMapper mapper) : ControllerBase
+public class BikeController(IRepository<Bike, int> repository,IRepository<BikeType> bikeTypeRepository, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Get all objects
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public ActionResult<IEnumerable<Rent>> Get() => Ok(repository.GetAll());
+    public ActionResult<IEnumerable<Bike>> Get() => Ok(repository.GetAll());
 
     /// <summary>
     /// Get sertain object
@@ -23,21 +24,17 @@ public class RentController(IRepository<Rent, int> repository, IRepository<Clien
     /// <param name="id"> object's id</param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public ActionResult<Rent> Get(int id) => Ok(repository.GetById(id));
+    public ActionResult<Bike> Get(int id) => Ok(repository.GetById(id));
 
     /// <summary>
     /// Post object
     /// </summary>
     /// <param name="value">object's dto</param>
     [HttpPost]
-    public IActionResult Post([FromBody] RentDto value)
+    public IActionResult Post([FromBody] BikeDto value)
     {
-        if(bikeRepository.GetById(value.BikeId) == null || clientRepository.GetById(value.ClientId) == null)
-        {
-            return NotFound();
-        }
-        var rent = mapper.Map<Rent>(value);
-        repository.Post(rent);
+        var bike = mapper.Map<Bike>(value);
+        repository.Post(bike);
         return Ok();
     }
 
@@ -48,16 +45,12 @@ public class RentController(IRepository<Rent, int> repository, IRepository<Clien
     /// <param name="id">object's id</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] RentDto value)
+    public ActionResult Put(int id, [FromBody] BikeDto value)
     {
-        if(clientRepository.GetById(value.ClientId) == null || bikeRepository.GetById(value.BikeId) == null)
+        var bike = mapper.Map<Bike>(value);
+        if (!repository.Put(bike, id))
         {
-            return NotFound();
-        }
-        var rent = mapper.Map<Rent>(value);
-        if (!repository.Put(rent, id))
-        {
-            return NotFound();
+            NotFound();
         }
         return Ok();
     }

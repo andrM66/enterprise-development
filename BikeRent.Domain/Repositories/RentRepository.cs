@@ -5,7 +5,7 @@ namespace BikeRent.Domain.Repositories;
 public class RentRepository : IRepository<Rent, int>
 {
     private readonly List<Rent> _rents = [];
-    private int _last_id = 0;
+    private int _lastId = 0;
 
     /// <summary>
     /// Delete sertain object
@@ -42,8 +42,7 @@ public class RentRepository : IRepository<Rent, int>
     /// <param name="entity">object</param>
     public void Post(Rent entity)
     {
-        _last_id++;
-        entity.Id = _last_id;
+        entity.Id = ++_lastId;
         _rents.Add(entity);
     }
 
