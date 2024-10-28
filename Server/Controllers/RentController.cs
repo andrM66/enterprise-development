@@ -8,7 +8,7 @@ namespace Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RentController(IRepository<Rent, int> repository, IMapper mapper) : ControllerBase
+public class RentController(IRepository<Rent, int> repository, IRepository<Bike, int> bikeRepository, IRepository<Client, int> clientRepository, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Get all objects
@@ -32,6 +32,10 @@ public class RentController(IRepository<Rent, int> repository, IMapper mapper) :
     [HttpPost]
     public IActionResult Post([FromBody] RentDto value)
     {
+        if(bikeRepository.GetById(value.BikeId) == null || clientRepository.GetById(value.ClientId) == null)
+        {
+            return NotFound();
+        }
         var rent = mapper.Map<Rent>(value);
         repository.Post(rent);
         return Ok();
@@ -46,6 +50,10 @@ public class RentController(IRepository<Rent, int> repository, IMapper mapper) :
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] RentDto value)
     {
+        if(bikeRepository.GetById(value.BikeId) == null || clientRepository.GetById(value.ClientId) == null)
+        {
+            return NotFound();
+        }
         var rent = mapper.Map<Rent>(value);
         if (!repository.Put(rent, id))
         {

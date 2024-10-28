@@ -3,7 +3,7 @@
 public class BikeRepository : IRepository<Bike, int>
 {
     private readonly List<Bike> _bikes = [];
-    private int _last_id = 0;
+    private int _lastId = 0;
 
     /// <summary>
     /// Delete sertain object
@@ -40,8 +40,8 @@ public class BikeRepository : IRepository<Bike, int>
     /// <param name="entity">object</param>
     public void Post(Bike entity)
     {
-        _last_id++;
-        entity.Id = _last_id;
+        
+        entity.Id = ++_lastId;
         _bikes.Add(entity);
     }
 

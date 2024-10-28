@@ -9,7 +9,7 @@ namespace Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BikeController(IRepository<Bike, int> repository, IMapper mapper) : ControllerBase
+public class BikeController(IRepository<Bike, int> repository, IRepository<BikeType, int> bikeTypeRepository, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Get all objects
@@ -33,6 +33,10 @@ public class BikeController(IRepository<Bike, int> repository, IMapper mapper) :
     [HttpPost]
     public IActionResult Post([FromBody] BikeDto value)
     {
+        if(bikeTypeRepository.GetById(value.TypeId) == null)
+        {
+            return NotFound();
+        }
         var bike = mapper.Map<Bike>(value);
         repository.Post(bike);
         return Ok();
@@ -47,10 +51,14 @@ public class BikeController(IRepository<Bike, int> repository, IMapper mapper) :
     [HttpPut("{id}")]
     public ActionResult Put(int id, [FromBody] BikeDto value)
     {
+        if(bikeTypeRepository.GetById(value.TypeId) == null)
+        {
+            return NotFound();
+        }
         var bike = mapper.Map<Bike>(value);
         if (!repository.Put(bike, id))
         {
-            NotFound();
+            return NotFound();
         }
         return Ok();
     }

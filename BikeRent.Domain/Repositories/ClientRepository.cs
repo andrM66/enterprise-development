@@ -3,7 +3,7 @@
 public class ClientRepository : IRepository<Client, int>
 {
     private readonly List<Client> _clients = [];
-    private int _last_id = 0;
+    private int _lastId = 0;
 
     /// <summary>
     /// Delete sertain object
@@ -40,8 +40,7 @@ public class ClientRepository : IRepository<Client, int>
     /// <param name="entity">object</param>
     public void Post(Client entity)
     {
-        _last_id++; 
-        entity.Id = _last_id;
+        entity.Id = ++_lastId;
         _clients.Add(entity);
     }
 
