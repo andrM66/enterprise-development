@@ -2,8 +2,13 @@
 
 public class BikeTypeRepository : IRepository<BikeType, int>
 {
-    private readonly List<BikeType> _bikeTypes = [];
-    private int _lastId = 0;
+    private readonly List<BikeType> _bikeTypes = 
+    [
+        new(){ Id = 1, Price = 300, Name = "Sport"},
+        new(){ Id = 2, Price = 350, Name = "Mountain"},
+        new(){ Id = 3, Price = 250, Name = "Walking"}
+    ];
+    private int _lastId = 3;
 
     /// <summary>
     /// Delete sertain object
@@ -40,7 +45,7 @@ public class BikeTypeRepository : IRepository<BikeType, int>
     /// <param name="entity">object</param>
     public void Post(BikeType entity)
     {
-        entity.Id = _lastId;
+        entity.Id = ++_lastId;
         _bikeTypes.Add(entity);
     }
 

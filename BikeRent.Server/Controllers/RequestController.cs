@@ -5,6 +5,7 @@ using AutoMapper;
 using Server.Dto;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Http.HttpResults;
+using BikeRent.Server.Dto;
 namespace BikeRent.Server.Controllers;
 [Route("api/[controller]")]
 [ApiController]
@@ -35,7 +36,7 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
         return Ok(sportBikes);
     }
     /// <summary>
-    /// Get every client who had ever took sport bike
+    /// Get every client who had ever took mountain bike
     /// </summary>
     /// <returns></returns>
     [HttpGet("mountainBikeClients")]
@@ -45,7 +46,7 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
         var bikes = bikeRepository.GetAll();
         var types = bikeTypeRepository.GetAll();
         var rents = rentRepository.GetAll();
-        var mountain_clients =
+        var mountainClients =
             (from type in types
              where type.Name == "Mountain"
              join bike in bikes on type.Id equals bike.TypeId
@@ -53,18 +54,18 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
              join client in clients on rent.ClientId equals client.Id
              orderby client.SecondName, client.FirstName, client.Patronymic
              select client).Distinct().ToList();
-        if(mountain_clients == null)
+        if(mountainClients == null)
         {
             return NotFound();
         }
-        return Ok(mountain_clients);
+        return Ok(mountainClients);
     }
     /// <summary>
     /// Get total time every bike type have been being rented
     /// </summary>
     /// <returns></returns>
     [HttpGet("typesTime")]
-    public ActionResult GetAllTypesTime()
+    public ActionResult<TypeTimeDto> GetAllTypesTime()
     {
         var bikes = bikeRepository.GetAll();
         var types = bikeTypeRepository.GetAll();
@@ -74,10 +75,10 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
             (from type in types
              join bike in bikes on type.Id equals bike.TypeId
              join rent in rents on bike.Id equals rent.BikeId
-             group new { rent, type } by type.Id into newRents
-             select new
+             group new { rent, type } by new { type.Id, type.Name} into newRents
+             select new 
              {
-                 newRents.Key,
+                 newRents.Key.Name,
                  Time = TimeSpan.FromSeconds(newRents.Sum(rn => rn.rent.End.Subtract(rn.rent.Begin).TotalSeconds))
              }).ToList();
         if(typeRentTime == null)
