@@ -1,5 +1,4 @@
 ﻿namespace BikeRent.Server.Dto;
-
 public class TypeTimeDto
 {
     /// <summary>

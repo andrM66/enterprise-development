@@ -2,7 +2,7 @@
 using BikeRent.Domain;
 using BikeRent.Domain.Repositories;
 using AutoMapper;
-using Server.Dto;
+using BikeRent.Server.Dto;
 
 
 namespace Server.Controllers;

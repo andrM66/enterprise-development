@@ -2,9 +2,6 @@
 using BikeRent.Domain;
 using BikeRent.Domain.Repositories;
 using AutoMapper;
-using Server.Dto;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Http.HttpResults;
 using BikeRent.Server.Dto;
 namespace BikeRent.Server.Controllers;
 [Route("api/[controller]")]
@@ -12,8 +9,7 @@ namespace BikeRent.Server.Controllers;
 public class RequestTaskController(IRepository<Client, int> clientRepository,
                                    IRepository<Bike, int> bikeRepository,
                                    IRepository<BikeType, int> bikeTypeRepository,
-                                   IRepository<Rent, int> rentRepository,
-                                   IMapper mapper) : ControllerBase
+                                   IRepository<Rent, int> rentRepository) : ControllerBase
 {
     /// <summary>
     /// Get all sport bikes

@@ -1,4 +1,4 @@
-﻿namespace Server.Dto;
+﻿namespace BikeRent.Server.Dto;
 
 public class BikeDto
 {
