@@ -14,7 +14,7 @@ public class BikeRepository(BikeRentDbContext context) : IRepository<Bike, int>
     public async Task<bool> DeleteAsync(int id)
     {
         var oldValue = await GetByIdAsync(id);
-        if (oldValue != null)
+        if (oldValue == null)
         {
             return false;
         }

@@ -26,25 +26,24 @@ public class BikeRentDbContext(DbContextOptions<BikeRentDbContext> options) : Db
 
         modelBuilder.Entity<Bike>()
             .HasOne<BikeType>()
-            .WithMany();
+            .WithMany()
+            .HasForeignKey(b => b.TypeId);
         modelBuilder.Entity<Bike>()
             .HasMany<Rent>()
-            .WithOne()
-            .HasForeignKey(r => r.BikeId);
+            .WithOne();
 
         modelBuilder.Entity<Client>()
             .HasMany<Rent>()
-            .WithOne()
-            .HasForeignKey(r => r.ClientId);
+            .WithOne();
 
         modelBuilder.Entity<Rent>()
             .HasOne<Bike>()
             .WithMany()
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(r => r.BikeId);
         modelBuilder.Entity<Rent>()
             .HasOne<Client>()
             .WithMany()
-            .OnDelete(DeleteBehavior.Cascade);          
+            .HasForeignKey(r => r.ClientId);
     }
 }
 
