@@ -16,7 +16,11 @@ public class BikeController(IRepository<Bike, int> repository, IRepository<BikeT
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public ActionResult<IEnumerable<Bike>> Get() => Ok(repository.GetAll());
+    public async Task<ActionResult<IEnumerable<Bike>>> Get()
+    {
+        var bikes = await repository.GetAllAsync();
+        return Ok(bikes);
+    }
 
     /// <summary>
     /// Get sertain object
@@ -24,21 +28,30 @@ public class BikeController(IRepository<Bike, int> repository, IRepository<BikeT
     /// <param name="id"> object's id</param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public ActionResult<Bike> Get(int id) => Ok(repository.GetById(id));
+    public async Task<ActionResult<Bike>> Get(int id)
+    {
+        var bike = await repository.GetByIdAsync(id);
+        if (bike == null)
+        {
+            return NotFound();
+        }
+        return Ok(bike);
+    }
 
     /// <summary>
     /// Post object
     /// </summary>
     /// <param name="value">object's dto</param>
     [HttpPost]
-    public IActionResult Post([FromBody] BikeDto value)
+    public async Task<IActionResult> Post([FromBody] BikeDto value)
     {
-        if(bikeTypeRepository.GetById(value.TypeId) == null)
+        var bikeType = await bikeTypeRepository.GetByIdAsync(value.TypeId);
+        if(bikeType == null)
         {
             return NotFound();
         }
         var bike = mapper.Map<Bike>(value);
-        repository.Post(bike);
+        await repository.PostAsync(bike);
         return Ok();
     }
 
@@ -49,14 +62,16 @@ public class BikeController(IRepository<Bike, int> repository, IRepository<BikeT
     /// <param name="id">object's id</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public ActionResult Put(int id, [FromBody] BikeDto value)
+    public async Task<ActionResult> Put(int id, [FromBody] BikeDto value)
     {
-        if(bikeTypeRepository.GetById(value.TypeId) == null)
+        var bikeType = await bikeTypeRepository.GetByIdAsync(id);
+        if(bikeType == null)
         {
             return NotFound();
         }
         var bike = mapper.Map<Bike>(value);
-        if (!repository.Put(bike, id))
+        var putFlag = await repository.PutAsync(bike, id);
+        if (!putFlag)
         {
             return NotFound();
         }
@@ -69,9 +84,10 @@ public class BikeController(IRepository<Bike, int> repository, IRepository<BikeT
     /// <param name="id"> object's id</param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if(!repository.Delete(id))
+        var deleteFlag = await repository.DeleteAsync(id);
+        if(!deleteFlag)
         {
             return NotFound();
         }

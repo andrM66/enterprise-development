@@ -15,7 +15,11 @@ public class BikeTypeController(IRepository<BikeType, int> repository, IMapper m
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public ActionResult<IEnumerable<BikeType>> Get() => Ok(repository.GetAll());
+    public async Task<ActionResult<IEnumerable<BikeType>>> Get()
+    {
+        var bikeTypes = await repository.GetAllAsync();
+        return Ok(bikeTypes);
+    }
 
     /// <summary>
     /// Get sertain object
@@ -24,17 +28,25 @@ public class BikeTypeController(IRepository<BikeType, int> repository, IMapper m
     /// <returns></returns>
     // GET api/<BikeTypeController>/5
     [HttpGet("{id}")]
-    public ActionResult<BikeType> Get(int id) => Ok(repository.GetById(id));
+    public async Task<ActionResult<BikeType>> Get(int id)
+    {
+        var bikeType = await repository.GetByIdAsync(id);
+        if (bikeType == null)
+        {
+            return NotFound();
+        }
+        return Ok(bikeType);
+    }
 
     /// <summary>
     /// Post object
     /// </summary>
     /// <param name="value">object's dto</param>
     [HttpPost]
-    public IActionResult Post([FromBody] BikeTypeDto value)
+    public async Task<IActionResult> Post([FromBody] BikeTypeDto value)
     {
         var bikeType = mapper.Map<BikeType>(value);
-        repository.Post(bikeType);
+        await repository.PostAsync(bikeType);
         return Ok();
     }
 
@@ -45,10 +57,11 @@ public class BikeTypeController(IRepository<BikeType, int> repository, IMapper m
     /// <param name="id">object's id</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] BikeTypeDto value)
+    public async Task<IActionResult> Put(int id, [FromBody] BikeTypeDto value)
     {
         var bikeType = mapper.Map<BikeType>(value);
-        if(!repository.Put(bikeType, id))
+        var putFlag = await repository.PutAsync(bikeType, id);
+        if(!putFlag)
         {
             return NotFound();
         }
@@ -61,9 +74,10 @@ public class BikeTypeController(IRepository<BikeType, int> repository, IMapper m
     /// <param name="id"> object's id</param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if(!repository.Delete(id))
+        var deleteFlag = await repository.DeleteAsync(id);
+        if(!deleteFlag)
         {
             return NotFound();
         }

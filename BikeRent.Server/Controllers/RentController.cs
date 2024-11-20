@@ -15,7 +15,11 @@ public class RentController(IRepository<Rent, int> repository, IRepository<Clien
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public ActionResult<IEnumerable<Rent>> Get() => Ok(repository.GetAll());
+    public async Task<ActionResult<IEnumerable<Rent>>> Get()
+    {
+        var rents = await repository.GetAllAsync();
+        return Ok(rents);
+    }
 
     /// <summary>
     /// Get sertain object
@@ -23,21 +27,31 @@ public class RentController(IRepository<Rent, int> repository, IRepository<Clien
     /// <param name="id"> object's id</param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public ActionResult<Rent> Get(int id) => Ok(repository.GetById(id));
+    public async Task<ActionResult<Rent>> Get(int id)
+    {
+        var rent = repository.GetByIdAsync(id);
+        if(rent == null)
+        {
+            return NotFound();
+        }
+        return Ok(rent);
+    }
 
     /// <summary>
     /// Post object
     /// </summary>
     /// <param name="value">object's dto</param>
     [HttpPost]
-    public IActionResult Post([FromBody] RentDto value)
+    public async Task<IActionResult> Post([FromBody] RentDto value)
     {
-        if(bikeRepository.GetById(value.BikeId) == null || clientRepository.GetById(value.ClientId) == null)
+        var bike = await bikeRepository.GetByIdAsync(value.BikeId);
+        var client = await clientRepository.GetByIdAsync(value.ClientId);
+        if(bike == null || client == null)
         {
             return NotFound();
         }
         var rent = mapper.Map<Rent>(value);
-        repository.Post(rent);
+        await repository.PostAsync(rent);
         return Ok();
     }
 
@@ -48,14 +62,17 @@ public class RentController(IRepository<Rent, int> repository, IRepository<Clien
     /// <param name="id">object's id</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] RentDto value)
+    public async Task<IActionResult> Put(int id, [FromBody] RentDto value)
     {
-        if(clientRepository.GetById(value.ClientId) == null || bikeRepository.GetById(value.BikeId) == null)
+        var client = await clientRepository.GetByIdAsync(value.ClientId);
+        var bike = await bikeRepository.GetByIdAsync(value.BikeId);
+        if(bike == null || client == null)
         {
             return NotFound();
         }
         var rent = mapper.Map<Rent>(value);
-        if (!repository.Put(rent, id))
+        var putFlag = await repository.PutAsync(rent, id);
+        if (!putFlag)
         {
             return NotFound();
         }
@@ -68,9 +85,10 @@ public class RentController(IRepository<Rent, int> repository, IRepository<Clien
     /// <param name="id"> object's id</param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if(!repository.Delete(id))
+        var deleteFlag = await repository.DeleteAsync(id);
+        if(!deleteFlag)
         {
             return NotFound();
         }

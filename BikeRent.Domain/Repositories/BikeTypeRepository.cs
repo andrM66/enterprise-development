@@ -1,30 +1,25 @@
 ﻿using BikeRent.Domain.Entities;
+using BikeRent.Domain.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace BikeRent.Domain.Repositories;
 
-public class BikeTypeRepository : IRepository<BikeType, int>
+public class BikeTypeRepository(BikeRentDbContext context) : IRepository<BikeType, int>
 {
-    private readonly List<BikeType> _bikeTypes = 
-    [
-        new(){ Id = 1, Price = 300, Name = "Sport"},
-        new(){ Id = 2, Price = 350, Name = "Mountain"},
-        new(){ Id = 3, Price = 250, Name = "Walking"}
-    ];
-    private int _lastId = 3;
-
     /// <summary>
     /// Delete sertain object
     /// </summary>
     /// <param name="id"> object's id</param>
     /// <returns></returns>
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var bikeType = GetById(id);
-        if (bikeType == null)
+        var oldValue = await GetByIdAsync(id);
+        if(oldValue == null)
         {
             return false;
         }
-        _bikeTypes.Remove(bikeType);
+        context.BikeTypes.Remove(oldValue);
+        await context.SaveChangesAsync();
         return true;
     }
 
@@ -32,23 +27,23 @@ public class BikeTypeRepository : IRepository<BikeType, int>
     /// Get all objects
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<BikeType> GetAll() => _bikeTypes;
+    public async Task<IEnumerable<BikeType>> GetAllAsync() => await context.BikeTypes.ToListAsync();
 
     /// <summary>
     /// Get sertain object
     /// </summary>
     /// <param name="id">object's id</param>
     /// <returns></returns>
-    public BikeType? GetById(int id) => _bikeTypes.Find(x => x.Id == id);
+    public async Task<BikeType>? GetByIdAsync(int id) =>  await context.BikeTypes.FirstOrDefaultAsync(bt => bt.Id == id);
 
     /// <summary>
     /// Post object
     /// </summary>
     /// <param name="entity">object</param>
-    public void Post(BikeType entity)
+    public async Task PostAsync(BikeType entity)
     {
-        entity.Id = ++_lastId;
-        _bikeTypes.Add(entity);
+        context.BikeTypes.Add(entity);
+        await context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -57,15 +52,16 @@ public class BikeTypeRepository : IRepository<BikeType, int>
     /// <param name="entity">object</param>
     /// <param name="id">object's id</param>
     /// <returns></returns>
-    public bool Put(BikeType entity, int id)
+    public async Task<bool> PutAsync(BikeType entity, int id)
     {
-        var oldValue = GetById(id);
-        if(oldValue == null)
+        var oldValue = await GetByIdAsync(id);
+        if (oldValue == null)
         {
             return false;
         }
-        oldValue.Name = entity.Name;
         oldValue.Price = entity.Price;
+        oldValue.Name = entity.Name;
+        await context.SaveChangesAsync();
         return true;
     }
 }

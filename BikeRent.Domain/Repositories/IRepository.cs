@@ -5,21 +5,21 @@ public interface IRepository<T, TId>
     /// Get all objects
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<T> GetAll();
+    Task<IEnumerable<T>> GetAllAsync();
 
     /// <summary>
     /// Get sertain object
     /// </summary>
     /// <param name="id">object's id</param>
     /// <returns></returns>
-    public T? GetById(TId id);
+    Task<T>? GetByIdAsync(TId id);
 
     /// <summary>
     /// Delete sertain object
     /// </summary>
     /// <param name="id"> object's id</param>
     /// <returns></returns>
-    public bool Delete(TId id);
+    Task<bool> DeleteAsync(TId id);
 
     /// <summary>
     /// Update sertain object
@@ -27,11 +27,11 @@ public interface IRepository<T, TId>
     /// <param name="entity">object</param>
     /// <param name="id">object's id</param>
     /// <returns></returns>
-    public bool Put(T entity, TId id);
+    Task<bool> PutAsync(T entity, TId id);
 
     /// <summary>
     /// Post object
     /// </summary>
     /// <param name="entity">object</param>
-    public void Post(T entity);
+    Task  PostAsync(T entity);
 }

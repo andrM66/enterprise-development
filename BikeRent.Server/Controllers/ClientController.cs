@@ -15,7 +15,11 @@ public class ClientController(IRepository<Client, int> repository, IMapper mappe
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public ActionResult<IEnumerable<Client>> Get() => Ok(repository.GetAll());
+    public async Task<ActionResult<IEnumerable<Client>>> Get()
+    {
+        var clients = await repository.GetAllAsync();
+        return Ok(clients);
+    }
 
     /// <summary>
     /// Get sertain object
@@ -23,17 +27,25 @@ public class ClientController(IRepository<Client, int> repository, IMapper mappe
     /// <param name="id"> object's id</param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public ActionResult<Client> Get(int id) => Ok(repository.GetById(id));
+    public async Task<ActionResult<Client>> Get(int id)
+    {
+        var client = await repository.GetByIdAsync(id);
+        if (client == null)
+        {
+            return NotFound();
+        }
+        return Ok(client);
+    }
 
     /// <summary>
     /// Post object
     /// </summary>
     /// <param name="value">object's dto</param>
     [HttpPost]
-    public IActionResult Post([FromBody] ClientDto value)
+    public async Task<IActionResult> Post([FromBody] ClientDto value)
     {
         var client = mapper.Map<Client>(value);
-        repository.Post(client);
+        await repository.PostAsync(client);
         return Ok();
     }
 
@@ -44,10 +56,11 @@ public class ClientController(IRepository<Client, int> repository, IMapper mappe
     /// <param name="id">object's id</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] ClientDto value)
+    public async Task<IActionResult> Put(int id, [FromBody] ClientDto value)
     {
         var client = mapper.Map<Client>(value);
-        if(!repository.Put(client, id))
+        var putFlag = await repository.PutAsync(client, id);
+        if(!putFlag)
         {
             return NotFound();
         }
@@ -60,9 +73,10 @@ public class ClientController(IRepository<Client, int> repository, IMapper mappe
     /// <param name="id"> object's id</param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if(!repository.Delete(id))
+        var deleteFlag = await repository.DeleteAsync(id);
+        if(!deleteFlag)
         {
             return NotFound();
         }

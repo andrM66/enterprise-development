@@ -1,25 +1,25 @@
 ﻿using BikeRent.Domain.Entities;
+using BikeRent.Domain.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace BikeRent.Domain.Repositories;
 
-public class ClientRepository : IRepository<Client, int>
+public class ClientRepository(BikeRentDbContext context) : IRepository<Client, int>
 {
-    private readonly List<Client> _clients = [];
-    private int _lastId = 0;
-
     /// <summary>
     /// Delete sertain object
     /// </summary>
     /// <param name="id"> object's id</param>
     /// <returns></returns>
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var client = GetById(id);
-        if (client == null)
+        var oldValue = await GetByIdAsync(id);
+        if (oldValue == null)
         {
             return false;
         }
-        _clients.Remove(client);
+        context.Remove(oldValue);
+        await context.SaveChangesAsync();
         return true;
     }
 
@@ -27,23 +27,23 @@ public class ClientRepository : IRepository<Client, int>
     /// Get all objects
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<Client> GetAll() => _clients;
+    public async Task<IEnumerable<Client>> GetAllAsync() => await context.Clients.ToListAsync();
 
     /// <summary>
     /// Get sertain object
     /// </summary>
     /// <param name="id">object's id</param>
     /// <returns></returns>
-    public Client? GetById(int id) => _clients.Find(x => x.Id == id);
+    public async Task<Client>? GetByIdAsync(int id) => await context.Clients.FirstOrDefaultAsync(cl => cl.Id == id);
 
     /// <summary>
     /// Post object
     /// </summary>
     /// <param name="entity">object</param>
-    public void Post(Client entity)
+    public async Task PostAsync(Client entity)
     {
-        entity.Id = ++_lastId;
-        _clients.Add(entity);
+        context.Clients.Add(entity);
+        await context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -52,18 +52,19 @@ public class ClientRepository : IRepository<Client, int>
     /// <param name="entity">object</param>
     /// <param name="id">object's id</param>
     /// <returns></returns>
-    public bool Put(Client entity, int id)
+    public async Task<bool> PutAsync(Client entity, int id)
     {
-        var oldValue = GetById(id);
+        var oldValue = await GetByIdAsync(id);
         if (oldValue == null)
         {
             return false;
         }
         oldValue.BirthDate = entity.BirthDate;
-        oldValue.PhoneNumber = entity.PhoneNumber;
         oldValue.FirstName = entity.FirstName;
         oldValue.SecondName = entity.SecondName;
         oldValue.Patronymic = entity.Patronymic;
+        oldValue.PhoneNumber = entity.PhoneNumber;
+        await context.SaveChangesAsync();
         return true;
     }
 }
