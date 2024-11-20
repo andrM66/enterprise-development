@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BikeRent.Domain;
+using BikeRent.Domain.Entities;
 using BikeRent.Server.Dto;
 
 namespace Server;

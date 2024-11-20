@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using BikeRent.Domain.Entities;
 
 namespace BikeRent.Domain.Repositories;
 

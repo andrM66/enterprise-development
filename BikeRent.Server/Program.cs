@@ -1,4 +1,4 @@
-using BikeRent.Domain;
+using BikeRent.Domain.Entities;
 using BikeRent.Domain.Repositories;
 using System.Reflection;
 

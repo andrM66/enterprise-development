@@ -1,4 +1,4 @@
-﻿using BikeRent.Domain;
+﻿using BikeRent.Domain.Entities;
 
 namespace BikeRent.Tests;
 public class BikeRentFixture

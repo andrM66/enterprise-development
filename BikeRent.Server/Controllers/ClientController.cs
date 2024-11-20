@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BikeRent.Domain;
 using BikeRent.Domain.Repositories;
 using BikeRent.Server.Dto;
 using AutoMapper;
+using BikeRent.Domain.Entities;
 
 namespace Server.Controllers;
 

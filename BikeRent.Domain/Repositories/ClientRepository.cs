@@ -1,4 +1,6 @@
-﻿namespace BikeRent.Domain.Repositories;
+﻿using BikeRent.Domain.Entities;
+
+namespace BikeRent.Domain.Repositories;
 
 public class ClientRepository : IRepository<Client, int>
 {
