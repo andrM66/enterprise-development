@@ -5,10 +5,10 @@ namespace BikeRent.Domain.Context;
 
 public class BikeRentDbContext(DbContextOptions<BikeRentDbContext> options) : DbContext(options)
 {
-    public DbSet<Client> Clients { get; set; }
-    public DbSet<BikeType> BikeTypes{ get; set; }
-    public DbSet<Bike> Bikes { get; set; }
-    public DbSet<Rent> Rents { get; set; }
+    public required DbSet<Client> Clients { get; set; }
+    public required DbSet<BikeType> BikeTypes{ get; set; }
+    public required DbSet<Bike> Bikes { get; set; }
+    public required DbSet<Rent> Rents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,22 +24,11 @@ public class BikeRentDbContext(DbContextOptions<BikeRentDbContext> options) : Db
             .HasForeignKey(b => b.TypeId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Bike>()
-            .HasOne<BikeType>()
-            .WithMany()
-            .HasForeignKey(b => b.TypeId);
-        modelBuilder.Entity<Bike>()
-            .HasMany<Rent>()
-            .WithOne();
-
-        modelBuilder.Entity<Client>()
-            .HasMany<Rent>()
-            .WithOne();
-
         modelBuilder.Entity<Rent>()
             .HasOne<Bike>()
             .WithMany()
             .HasForeignKey(r => r.BikeId);
+
         modelBuilder.Entity<Rent>()
             .HasOne<Client>()
             .WithMany()

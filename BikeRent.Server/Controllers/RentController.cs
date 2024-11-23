@@ -29,7 +29,7 @@ public class RentController(IRepository<Rent, int> repository, IRepository<Clien
     [HttpGet("{id}")]
     public async Task<ActionResult<Rent>> Get(int id)
     {
-        var rent = repository.GetByIdAsync(id);
+        var rent = await repository.GetByIdAsync(id);
         if(rent == null)
         {
             return NotFound();

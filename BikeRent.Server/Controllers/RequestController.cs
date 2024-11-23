@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BikeRent.Domain.Repositories;
-using AutoMapper;
-using BikeRent.Server.Dto;
 using BikeRent.Domain.Entities;
+using BikeRent.Server.Dto;
+
 namespace BikeRent.Server.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class RequestTaskController(IRepository<Client, int> clientRepository,

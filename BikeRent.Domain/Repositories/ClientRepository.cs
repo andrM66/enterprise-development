@@ -34,7 +34,7 @@ public class ClientRepository(BikeRentDbContext context) : IRepository<Client, i
     /// </summary>
     /// <param name="id">object's id</param>
     /// <returns></returns>
-    public async Task<Client>? GetByIdAsync(int id) => await context.Clients.FirstOrDefaultAsync(cl => cl.Id == id);
+    public async Task<Client?> GetByIdAsync(int id) => await context.Clients.FirstOrDefaultAsync(cl => cl.Id == id);
 
     /// <summary>
     /// Post object

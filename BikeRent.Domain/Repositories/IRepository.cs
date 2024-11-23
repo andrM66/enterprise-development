@@ -12,7 +12,7 @@ public interface IRepository<T, TId>
     /// </summary>
     /// <param name="id">object's id</param>
     /// <returns></returns>
-    Task<T>? GetByIdAsync(TId id);
+    Task<T?> GetByIdAsync(TId id);
 
     /// <summary>
     /// Delete sertain object

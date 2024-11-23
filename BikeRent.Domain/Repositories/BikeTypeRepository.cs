@@ -34,7 +34,7 @@ public class BikeTypeRepository(BikeRentDbContext context) : IRepository<BikeTyp
     /// </summary>
     /// <param name="id">object's id</param>
     /// <returns></returns>
-    public async Task<BikeType>? GetByIdAsync(int id) =>  await context.BikeTypes.FirstOrDefaultAsync(bt => bt.Id == id);
+    public async Task<BikeType?> GetByIdAsync(int id) =>  await context.BikeTypes.FirstOrDefaultAsync(bt => bt.Id == id);
 
     /// <summary>
     /// Post object
