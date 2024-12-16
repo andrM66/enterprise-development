@@ -1,0 +1,56 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Modal @ref="_bikeTypeModal">
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Изменить исполнителя</ModalTitle>
+                <CloseButton Clicked="CloseBikeTypeModalAsync" />
+            </ModalHeader>
+
+            <ModalBody>
+                <Field>
+                    <FieldLabel>Имя исполнителя</FieldLabel>
+                    @if (TypeToUpdate != null)
+                    {
+                        <InputText @bind-Value="TypeToUpdate.Name" />
+                    }
+                </Field>
+                <Field>
+                    <FieldLabel>Описание исполнителя</FieldLabel>
+                    @if (TypeToUpdate != null)
+                    {
+                        <InputNumber @bind-Value="TypeToUpdate.Price" />
+                    }
+                </Field>
+            </ModalBody>
+
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="CloseBikeTypeModalAsync">Cancel</Button>
+                <Button Color="Color.Primary" Clicked="UpdateBikeTypeAsync">Edit</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnBikeTypeUpdated { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public BikeTypeDto? TypeToUpdate { get; set; }
+
+    private Modal _bikeTypeModal = new();
+
+    public async Task Show() => await _bikeTypeModal.Show();
+
+    private async Task CloseBikeTypeModalAsync() => await _bikeTypeModal.Hide();
+
+    private async Task UpdateBikeTypeAsync()
+    {
+        await BikeRentApi.PutBikeType(Id, TypeToUpdate!);
+        await _bikeTypeModal.Hide();
+        await OnBikeTypeUpdated.InvokeAsync();
+    }
+}

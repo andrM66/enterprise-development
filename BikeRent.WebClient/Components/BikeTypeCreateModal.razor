@@ -1,0 +1,47 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Modal @ref="_bikeTypeModal">
+	<ModalContent Centered>
+		<Form>
+			<ModalHeader>
+				<ModalTitle>New bike type</ModalTitle>
+				<CloseButton Clicked="CloseBikeTypeModalAsync"></CloseButton>
+			</ModalHeader>
+			<ModalBody>
+				<Field>
+					<FieldLabel>Price</FieldLabel>
+					<InputNumber @bind-Value="_newBikeType.Price" />
+				</Field>
+				<Field>
+					<FieldLabel>Title</FieldLabel>
+					<InputText @bind-Value="_newBikeType.Name"></InputText>
+				</Field>
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Secondary" Clicked="CloseBikeTypeModalAsync">Cancel</Button>
+				<Button Color="Color.Secondary" Clicked="CreateBikeTypeAsync">Create</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>
+@code {
+	[Parameter]
+	public EventCallback OnBikeTypeAdded { get; set; }
+	private Modal _bikeTypeModal = new();
+	BikeTypeDto _newBikeType = new();
+
+	public async Task Show() => await _bikeTypeModal.Show();
+
+	private async Task CloseBikeTypeModalAsync()
+	{
+		_newBikeType = new BikeTypeDto();
+		await _bikeTypeModal.Hide();
+	}
+	private async Task CreateBikeTypeAsync()
+	{
+		await BikeRentApi.PostBikeType(_newBikeType);
+		_newBikeType = new BikeTypeDto();
+		await _bikeTypeModal.Hide();
+		await OnBikeTypeAdded.InvokeAsync();
+	}
+}

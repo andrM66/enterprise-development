@@ -1,0 +1,105 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Modal @ref="_bikeModal">
+    <Alert Color="Color.Danger" @bind-Visible="@_isAlertVisible">
+        <AlertMessage>Empty</AlertMessage>
+    </Alert>
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Edit bike to bike type relation</ModalTitle>
+                <CloseButton Clicked="CloseBikeModalAsync" />
+            </ModalHeader>
+
+            <ModalBody>
+                @if (BikeToUpdate != null)
+                {
+                    <Field>
+                        <FieldLabel>Choos bike type</FieldLabel>
+                        <Select TValue="int" @bind-SelectedValue="BikeToUpdate!.TypeId">
+                            @if (_bikeTypes != null)
+                            {
+                                @foreach (var bikeType in _bikeTypes)
+                                {
+                                    <SelectItem Value="@bikeType.Id">@bikeType.Name</SelectItem>
+                                }
+                            }
+                        </Select>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Model</FieldLabel>
+                        @if (BikeToUpdate != null)
+                        {
+                            <InputText @bind-Value="BikeToUpdate.Model" />
+                        }
+                    </Field>
+                    <Field>
+                        <FieldLabel>Color</FieldLabel>
+                        @if (BikeToUpdate != null)
+                        {
+                            <InputText @bind-Value="BikeToUpdate.Color" />
+                        }
+                    </Field>
+                }
+            </ModalBody>
+
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="CloseBikeModalAsync">Cancel</Button>
+                <Button Color="Color.Primary" Clicked="UpdateBikeAsync">Edit</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnBikeUpdated { get; set; }
+    [Parameter]
+    public int BikeId { get; set; }
+    [Parameter]
+    public BikeDto? BikeToUpdate { get; set; }
+
+    private IEnumerable<BikeType>? _bikeTypes;
+    private Modal _bikeModal = new();
+    private bool _isAlertVisible = false;
+
+    public async Task Show()
+    {
+        await TakeBikeTypes();
+        await _bikeModal.Show();
+    }
+
+    private async Task CloseBikeModalAsync()
+    {
+        _isAlertVisible = false;
+        BikeToUpdate = new();
+        await _bikeModal.Hide();
+    }
+
+    private async Task UpdateBikeAsync()
+    {
+        try
+        {
+            await BikeRentApi.PutBike(BikeId, BikeToUpdate);
+            await CloseBikeModalAsync();
+            await OnBikeUpdated.InvokeAsync();
+        }
+        catch
+        {
+            _isAlertVisible = true;
+        }
+    }
+
+    private async Task TakeBikeTypes()
+    {
+        _bikeTypes = await BikeRentApi.GetAllBikeTypes();
+        if (_bikeTypes?.FirstOrDefault() is null)
+        {
+            BikeToUpdate!.TypeId = 0;
+        }
+        else
+        {
+            BikeToUpdate!.TypeId = _bikeTypes.FirstOrDefault()!.Id;
+        }
+    }
+}

@@ -1,0 +1,113 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreateModal">
+                    Create
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="Bike"
+        Data="_bikes"
+        Responsive
+        Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px"
+                TItem="Bike"
+                Field="@nameof(Bike.Id)"
+                Caption="Actions">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Actions
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => OpenEditPageAsync(context)">
+                                    Edit
+                                </DropdownItem>
+                                <DropdownItem Clicked="() => DeleteBikeAsync(context)">
+                                    Delete
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="Bike"
+                Field="@nameof(Bike.TypeId)"
+                Caption="Type">
+                    <DisplayTemplate>
+                        @GetTypeName(context.TypeId)
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="Bike"
+                Field="@nameof(Bike.Model)"
+                Caption="Model">
+                </DataGridColumn>
+                <DataGridColumn TItem="Bike"
+                Field="@nameof(Bike.Color)"
+                Caption="Color">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+<BikeCreateModal @ref="_bikeCreateModal" OnBikeAdded="@HandleBikeListChanged" />
+<BikeUpdateModal @ref="_bikeUpdateModal" BikeToUpdate="_selectedBike" BikeId="_selectedId" OnBikeUpdated="@HandleBikeListChanged" />
+
+@code {
+    private IEnumerable<Bike> _bikes = [];
+    private IEnumerable<BikeType>? _bikeTypes;
+    private int _selectedId;
+    private BikeDto? _selectedBike;
+    private BikeCreateModal _bikeCreateModal = new();
+    private BikeUpdateModal _bikeUpdateModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshBikeCollection();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OpenEditPageAsync(Bike context)
+    {
+        _selectedId = context.Id;
+        _selectedBike = new BikeDto()
+        {
+            TypeId = context.TypeId,
+            Model = context.Model,
+            Color = context.Color
+        };
+        await _bikeUpdateModal.Show();
+    }
+
+    private async Task DeleteBikeAsync(Bike context)
+    {
+        await BikeRentApi.DeleteBike(context.Id);
+        await RefreshBikeCollection();
+    }
+
+    private async Task HandleBikeListChanged()
+    {
+        await RefreshBikeCollection();
+    }
+
+    private async Task OpenCreateModal() => await _bikeCreateModal.Show();
+
+    private async Task RefreshBikeCollection()
+    {
+        _bikes = await BikeRentApi.GetAllBikes();
+        _bikeTypes = await BikeRentApi.GetAllBikeTypes();
+    }
+
+    private string GetTypeName(int typeId)
+    {
+        return _bikeTypes?.FirstOrDefault(t => t.Id == typeId)?.Name ?? "Unknown";
+    }
+}

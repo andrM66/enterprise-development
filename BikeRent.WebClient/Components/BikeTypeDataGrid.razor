@@ -1,0 +1,89 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreatedModal">Create</Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="BikeType"
+        Data="_bikeTypes"
+        Responsive
+        Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px"
+                TItem="BikeType"
+                Field="@nameof(BikeType.Id)"
+                Caption="Actions">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Actions
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => OpenEditPageAsync(context)">
+                                    Edit
+                                </DropdownItem>
+                                <DropdownItem Clicked="() => DeleteBikeTypeAsync(context)">
+                                    Delete
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="BikeType"
+                Field="@nameof(BikeType.Name)"
+                Caption="Type name">
+                </DataGridColumn>
+                <DataGridColumn TItem="BikeType"
+                Field="@nameof(BikeType.Price)"
+                Caption="Rent price">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+<BikeTypeCreateModal @ref="_bikeTypeCreateModal" OnBikeTypeAdded="@HandleBikeTypeListChanged"></BikeTypeCreateModal>
+<BikeTypeUpdateModal @ref="_bikeTypeUpdateModal" TypeToUpdate="_selectedBikeType" Id="_selectedId" OnBikeTypeUpdated="@HandleBikeTypeListChanged" />
+@code {
+    private IEnumerable<BikeType> _bikeTypes = [];
+    private int _selectedId;
+    private BikeTypeDto? _selectedBikeType;
+    private BikeTypeCreateModal _bikeTypeCreateModal = new();
+    private BikeTypeUpdateModal _bikeTypeUpdateModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshBikeTypeCollection();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OpenEditPageAsync(BikeType context)
+    {
+        _selectedId = context.Id;
+        _selectedBikeType = new()
+            {
+                Name = context.Name,
+                Price = context.Price
+            };
+        await _bikeTypeUpdateModal.Show();
+    }
+
+    private async Task DeleteBikeTypeAsync(BikeType context)
+    {
+        await BikeRentApi.DeleteBikeType(context.Id);
+        await RefreshBikeTypeCollection();
+    }
+
+    private async Task HandleBikeTypeListChanged()
+    {
+        await RefreshBikeTypeCollection();
+    }
+
+    private async Task OpenCreatedModal() => await _bikeTypeCreateModal.Show();
+
+    private async Task RefreshBikeTypeCollection() => _bikeTypes = await BikeRentApi.GetAllBikeTypes();
+}

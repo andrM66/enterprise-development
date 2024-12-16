@@ -20,6 +20,13 @@ builder.Services.AddScoped<IRepository<Client, int>, ClientRepository>();
 builder.Services.AddScoped<IRepository<BikeType, int>, BikeTypeRepository>();
 builder.Services.AddScoped<IRepository<Rent, int>, RentRepository>();
 builder.Services.AddAutoMapper(typeof(Server.Mapping));
+builder.Services.AddCors(options =>
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyOrigin();
+                    policy.AllowAnyMethod();
+                    policy.AllowAnyHeader();
+                }));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,7 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.MapControllers();

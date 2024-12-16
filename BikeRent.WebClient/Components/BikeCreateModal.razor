@@ -1,0 +1,93 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Modal @ref="_bikeModal">
+    <Alert Color="Color.Danger" @bind-Visible="@_isAlertVisible">
+        <AlertMessage>Try again</AlertMessage>
+    </Alert>
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>New bike to bike type relation</ModalTitle>
+                <CloseButton Clicked="CloseBikeModalAsync" />
+            </ModalHeader>
+
+            <ModalBody>
+                <Field>
+                    <FieldLabel>Bike type</FieldLabel>
+                    <Select TValue="int" @bind-SelectedValue="_newBike.TypeId">
+                        @if (_bikeTypes != null)
+                        {
+                            @foreach (var bikeType in _bikeTypes)
+                            {
+                                <SelectItem Value="@bikeType.Id">@bikeType.Name</SelectItem>
+                            }
+                        }
+                    </Select>
+                </Field>
+                <Field>
+                    <FieldLabel>Model</FieldLabel>
+                    <InputText @bind-Value="_newBike.Model"></InputText>
+                </Field>
+                <Field>
+                    <FieldLabel>Color</FieldLabel>
+                    <InputText @bind-Value="_newBike.Color"></InputText>
+                </Field>
+            </ModalBody>
+
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="CloseBikeModalAsync">Отмена</Button>
+                <Button Color="Color.Primary" Clicked="CreateBikeAsync">Создать</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnBikeAdded { get; set; }
+
+    private Modal _bikeModal = new();
+    private BikeDto _newBike = new();
+    private IEnumerable<BikeType>? _bikeTypes;
+    private bool _isAlertVisible = false;
+
+    public async Task Show()
+    {
+        await TakeBikeTypes();
+        await _bikeModal.Show();
+    }
+
+    private async Task CloseBikeModalAsync()
+    {
+        _isAlertVisible = false;
+        _newBike = new();
+        await _bikeModal.Hide();
+    }
+
+    private async Task CreateBikeAsync()
+    {
+        try
+        {
+            await BikeRentApi.PostBike(_newBike);
+            await CloseBikeModalAsync();
+            await OnBikeAdded.InvokeAsync();
+        }
+        catch
+        {
+            _isAlertVisible = true;
+        }
+    }
+
+    private async Task TakeBikeTypes()
+    {
+        _bikeTypes = await BikeRentApi.GetAllBikeTypes();
+        if (_bikeTypes?.FirstOrDefault() is null)
+        {
+            _newBike.TypeId = 0;
+        }
+        else
+        {
+            _newBike.TypeId = _bikeTypes.FirstOrDefault()!.Id;
+        }
+    }
+}
