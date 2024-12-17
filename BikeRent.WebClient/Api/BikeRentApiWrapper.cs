@@ -39,5 +39,5 @@ public class BikeRentApiWrapper(IConfiguration configuration) : IBikeRentApiWrap
 
     public async Task<IEnumerable<Bike>> Request5() => [.. await _client.TopFiveBikesAsync()];
 
-    public async Task<IEnumerable<string>> Request6() => await _client.RentStatsAsync();
+    public async Task<IEnumerable<string>> Request6() => [.. await _client.RentStatsAsync()];
 }
