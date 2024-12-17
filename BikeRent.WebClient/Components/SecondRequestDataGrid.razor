@@ -1,0 +1,57 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        Get every client who had ever took mountain bike
+        <DataGrid TItem="Client"
+                  Data="_clients"
+                  Responsive
+                  Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px"
+                                TItem="Client"
+                                Field="@nameof(Client.Id)"
+                                Caption="Id">
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.FirstName)"
+                                Caption="First name">
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.SecondName)"
+                                Caption="Second Name">
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.Patronymic)"
+                                Caption="Patronymic">
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.BirthDate)"
+                                Caption="Birthday">
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.PhoneNumber)"
+                                Caption="PhoneNumber">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+    private IEnumerable<Client> _clients = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshBikeTypeCollection();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshBikeTypeCollection() => _clients = await BikeRentApi.Request2();
+}

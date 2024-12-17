@@ -42,6 +42,8 @@ public class RentRepository(BikeRentDbContext context) : IRepository<Rent, int>
     /// <param name="entity">object</param>
     public async Task PostAsync(Rent entity)
     {
+        entity.Begin = DateTime.SpecifyKind(entity.Begin, DateTimeKind.Utc);
+        entity.End = DateTime.SpecifyKind(entity.End, DateTimeKind.Utc);
         context.Rents.Add(entity);
         await context.SaveChangesAsync();
     }
@@ -59,6 +61,8 @@ public class RentRepository(BikeRentDbContext context) : IRepository<Rent, int>
         {
             return false;
         }
+        oldValue.Begin = DateTime.SpecifyKind(oldValue.Begin, DateTimeKind.Utc);
+        oldValue.End = DateTime.SpecifyKind(entity.End, DateTimeKind.Utc);
         oldValue.Begin = entity.Begin;
         oldValue.End = entity.End;
         oldValue.BikeId = entity.BikeId;

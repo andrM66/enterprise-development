@@ -1,0 +1,119 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Modal @ref="_rentModal">
+    <Alert Color="Color.Danger" @bind-Visible="@_isAlertVisible">
+        <AlertMessage>Try again</AlertMessage>
+    </Alert>
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>New rent</ModalTitle>
+                <CloseButton Clicked="CloseRentModalAsync" />
+            </ModalHeader>
+
+            <ModalBody>
+                <Field>
+                    <FieldLabel>Bike</FieldLabel>
+                    <Select TValue="int" @bind-SelectedValue="_newRent.BikeId">
+                        @if (_bikes != null)
+                        {
+                            @foreach (var bike in _bikes)
+                            {
+                                <SelectItem Value="@bike.Id">@bike.Model</SelectItem>
+                            }
+                        }
+                    </Select>
+                </Field>
+                <Field>
+                    <FieldLabel>Client</FieldLabel>
+                    <Select TValue="int" @bind-SelectedValue="_newRent.ClientId">
+                        @if (_clients != null)
+                        {
+                            @foreach (var client in _clients)
+                            {
+                                <SelectItem Value="@client.Id">@client.FirstName</SelectItem>
+                            }
+                        }
+                    </Select>
+                </Field>
+                <Field>
+                    <FieldLabel>Start time</FieldLabel>
+                    <InputDate @bind-Value="_newRent.Begin"></InputDate>
+                </Field>
+                <Field>
+                    <FieldLabel>End time</FieldLabel>
+                    <InputDate @bind-Value="_newRent.End"></InputDate>
+                </Field>
+            </ModalBody>
+
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="CloseRentModalAsync">Cancel</Button>
+                <Button Color="Color.Primary" Clicked="CreateRentAsync">Create</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnRentAdded { get; set; }
+
+    private Modal _rentModal = new();
+    private RentDto _newRent = new();
+    private IEnumerable<Bike>? _bikes;
+    private IEnumerable<Client>? _clients;
+    private bool _isAlertVisible = false;
+
+    public async Task Show()
+    {
+        await TakeBikes();
+        await TakeClients();
+        await _rentModal.Show();
+    }
+
+    private async Task CloseRentModalAsync()
+    {
+        _isAlertVisible = false;
+        _newRent = new();
+        await _rentModal.Hide();
+    }
+
+    private async Task CreateRentAsync()
+    {
+        try
+        {
+            await BikeRentApi.PostRent(_newRent);
+            await CloseRentModalAsync();
+            await OnRentAdded.InvokeAsync();
+        }
+        catch
+        {
+            _isAlertVisible = true;
+        }
+    }
+
+    private async Task TakeBikes()
+    {
+        _bikes = await BikeRentApi.GetAllBikes();
+        if (_bikes?.FirstOrDefault() is null)
+        {
+            _newRent.BikeId = 0;
+        }
+        else
+        {
+            _newRent.BikeId = _bikes.FirstOrDefault()!.Id;
+        }
+    }
+    private async Task TakeClients()
+    {
+        _clients = await BikeRentApi.GetAllClients();
+        if (_clients?.FirstOrDefault() is null)
+        {
+            _newRent.ClientId = 0;
+        }
+        else
+        {
+            _newRent.ClientId = _clients.FirstOrDefault()!.Id;
+        }
+    }
+}

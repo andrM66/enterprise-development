@@ -1,0 +1,59 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Modal @ref="_clientModal">
+	<ModalContent Centered>
+		<Form>
+			<ModalHeader>
+				<ModalTitle>New client</ModalTitle>
+				<CloseButton Clicked="CloseClientModalAsync"></CloseButton>
+			</ModalHeader>
+			<ModalBody>
+				<Field>
+					<FieldLabel>Firstname</FieldLabel>
+					<InputText @bind-Value="_newClient.FirstName" />
+				</Field>
+				<Field>
+					<FieldLabel>Secondname</FieldLabel>
+					<InputText @bind-Value="_newClient.SecondName"/>
+				</Field>
+				<Field>
+					<FieldLabel>Patronimic</FieldLabel>
+					<InputText @bind-Value="_newClient.Patronymic" />
+				</Field>
+				<Field>
+					<FieldLabel>Birth date</FieldLabel>
+					<InputDate @bind-Value="_newClient.BirthDate" />
+				</Field>
+				<Field>
+					<FieldLabel>Phone number</FieldLabel>
+					<InputText @bind-Value="_newClient.PhoneNumber" />
+				</Field>
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Secondary" Clicked="CloseClientModalAsync">Cancel</Button>
+				<Button Color="Color.Secondary" Clicked="CreateClientAsync">Create</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>
+@code {
+	[Parameter]
+	public EventCallback OnClientAdded { get; set; }
+	private Modal _clientModal = new();
+	ClientDto _newClient = new();
+
+	public async Task Show() => await _clientModal.Show();
+
+	private async Task CloseClientModalAsync()
+	{
+		_newClient = new ClientDto();
+		await _clientModal.Hide();
+	}
+	private async Task CreateClientAsync()
+	{
+		await BikeRentApi.PostClient(_newClient);
+		_newClient = new ClientDto();
+		await _clientModal.Hide();
+		await OnClientAdded.InvokeAsync();
+	}
+}

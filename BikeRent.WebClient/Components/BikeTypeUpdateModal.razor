@@ -4,20 +4,20 @@
     <ModalContent Centered>
         <Form>
             <ModalHeader>
-                <ModalTitle>Изменить исполнителя</ModalTitle>
+                <ModalTitle>Change Bike Type</ModalTitle>
                 <CloseButton Clicked="CloseBikeTypeModalAsync" />
             </ModalHeader>
 
             <ModalBody>
                 <Field>
-                    <FieldLabel>Имя исполнителя</FieldLabel>
+                    <FieldLabel>Name</FieldLabel>
                     @if (TypeToUpdate != null)
                     {
                         <InputText @bind-Value="TypeToUpdate.Name" />
                     }
                 </Field>
                 <Field>
-                    <FieldLabel>Описание исполнителя</FieldLabel>
+                    <FieldLabel>Price</FieldLabel>
                     @if (TypeToUpdate != null)
                     {
                         <InputNumber @bind-Value="TypeToUpdate.Price" />

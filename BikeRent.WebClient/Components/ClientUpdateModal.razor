@@ -1,0 +1,72 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Modal @ref="_clientModal">
+    <ModalContent Centered>
+        <Form>
+            <ModalBody>
+                <Field>
+                    <FieldLabel>Name</FieldLabel>
+                    @if (ClientToUpdate != null)
+                    {
+                        <InputText @bind-Value="ClientToUpdate.FirstName" />
+                    }
+                </Field>
+                <Field>
+                    <FieldLabel>Second name</FieldLabel>
+                    @if (ClientToUpdate != null)
+                    {
+                        <InputText @bind-Value="ClientToUpdate.SecondName" />
+                    }
+                </Field>
+                <Field>
+                    <FieldLabel>Patronimic</FieldLabel>
+                    @if (ClientToUpdate != null)
+                    {
+                        <InputText @bind-Value="ClientToUpdate.Patronymic" />
+                    }
+                </Field>
+                <Field>
+                    <FieldLabel>Birthday</FieldLabel>
+                    @if(ClientToUpdate != null)
+                    {
+                        <InputDate @bind-Value="ClientToUpdate.BirthDate" />
+                    }
+                </Field>
+                <Field>
+                    <FieldLabel>Phone Number</FieldLabel>
+                    @if (ClientToUpdate != null)
+                    {
+                        <InputText @bind-Value="ClientToUpdate.PhoneNumber" />
+                    }
+                </Field>
+            </ModalBody>
+
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="CloseClientModalAsync">Cancel</Button>
+                <Button Color="Color.Primary" Clicked="UpdateClientAsync">Edit</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnClientUpdated { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public ClientDto? ClientToUpdate { get; set; }
+
+    private Modal _clientModal = new();
+
+    public async Task Show() => await _clientModal.Show();
+
+    private async Task CloseClientModalAsync() => await _clientModal.Hide();
+
+    private async Task UpdateClientAsync()
+    {
+        await BikeRentApi.PutClient(Id, ClientToUpdate!);
+        await _clientModal.Hide();
+        await OnClientUpdated.InvokeAsync();
+    }
+}

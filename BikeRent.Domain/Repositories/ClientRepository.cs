@@ -42,6 +42,7 @@ public class ClientRepository(BikeRentDbContext context) : IRepository<Client, i
     /// <param name="entity">object</param>
     public async Task PostAsync(Client entity)
     {
+        entity.BirthDate = DateTime.SpecifyKind(entity.BirthDate, DateTimeKind.Utc);
         context.Clients.Add(entity);
         await context.SaveChangesAsync();
     }
@@ -60,6 +61,7 @@ public class ClientRepository(BikeRentDbContext context) : IRepository<Client, i
             return false;
         }
         oldValue.BirthDate = entity.BirthDate;
+        oldValue.BirthDate = DateTime.SpecifyKind(oldValue.BirthDate, DateTimeKind.Utc);
         oldValue.FirstName = entity.FirstName;
         oldValue.SecondName = entity.SecondName;
         oldValue.Patronymic = entity.Patronymic;

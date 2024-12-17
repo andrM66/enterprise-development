@@ -80,7 +80,7 @@
     {
         try
         {
-            await BikeRentApi.PutBike(BikeId, BikeToUpdate);
+            await BikeRentApi.PutBike(BikeId, BikeToUpdate!);
             await CloseBikeModalAsync();
             await OnBikeUpdated.InvokeAsync();
         }

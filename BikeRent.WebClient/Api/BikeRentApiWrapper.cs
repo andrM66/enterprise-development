@@ -28,4 +28,16 @@ public class BikeRentApiWrapper(IConfiguration configuration) : IBikeRentApiWrap
     public async Task DeleteBikeType(int id) => await _client.BikeTypeDELETEAsync(id);
     public async Task DeleteClient(int id) => await _client.ClientDELETEAsync(id);
     public async Task DeleteRent(int id) => await _client.RentDELETEAsync(id);
+
+    public async Task<IEnumerable<Bike>> Request1() => await _client.SportBikesAsync();
+
+    public async Task<IEnumerable<Client>> Request2() => await _client.MountainBikeClientsAsync();
+
+    public async Task<IEnumerable<TypeTimeDto>> Request3() => await _client.TypesTimeAsync();
+
+    public async Task<IEnumerable<Client>> Request4() => await _client.TopClientsAsync();
+
+    public async Task<IEnumerable<Bike>> Request5() => await _client.TopFiveBikesAsync();
+
+    public async Task<IEnumerable<string>> Request6() => await _client.RentStatsAsync();
 }

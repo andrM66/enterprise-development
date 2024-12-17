@@ -1,0 +1,37 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        Get maximum, minimum and average rental time
+        <DataGrid TItem="string"
+                  Data="_time"
+                  Responsive
+                  Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px"
+                                TItem="string"
+                                Field="@nameof(_time)"
+                                Caption="Time stats">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+    private IEnumerable<string> _time = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshBikeTypeCollection();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshBikeTypeCollection() => _time = await BikeRentApi.Request6();
+}

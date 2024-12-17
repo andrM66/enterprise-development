@@ -1,0 +1,49 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        Get five bikes that have been rented most times
+        <DataGrid TItem="Bike"
+                  Data="_bikes"
+                  Responsive
+                  Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px"
+                                TItem="Bike"
+                                Field="@nameof(Bike.Id)"
+                                Caption="Id">
+                </DataGridColumn>
+                <DataGridColumn TItem="Bike"
+                                Field="@nameof(Bike.TypeId)"
+                                Caption="Type id">
+                </DataGridColumn>
+                <DataGridColumn TItem="Bike"
+                                Field="@nameof(Bike.Model)"
+                                Caption="Model">
+                </DataGridColumn>
+                <DataGridColumn TItem="Bike"
+                                Field="@nameof(Bike.Color)"
+                                Caption="Color">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+    private IEnumerable<Bike> _bikes = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshBikeTypeCollection();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshBikeTypeCollection() => _bikes = await BikeRentApi.Request5();
+}

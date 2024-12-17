@@ -1,0 +1,127 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreateModal">
+                    Create
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="Rent"
+        Data="_rents"
+        Responsive
+        Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px"
+                TItem="Rent"
+                Field="@nameof(Rent.Id)"
+                Caption="Actions">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Actions
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => OpenRentEditPageAsync(context)">
+                                    Edit
+                                </DropdownItem>
+                                <DropdownItem Clicked="() => DeleteRentAsync(context)">
+                                    Delete
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="Rent"
+                Field="@nameof(Rent.ClientId)"
+                Caption="Client name">
+                    <DisplayTemplate>
+                        @GetClientName(context.ClientId)
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="Rent"
+                Field="@nameof(Rent.BikeId)"
+                Caption="Bike model">
+                    <DisplayTemplate>
+                        @GetBikeName(context.BikeId)
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="Rent"
+                Field="@nameof(Rent.Begin)"
+                Caption="Start time">
+                </DataGridColumn>
+                <DataGridColumn TItem="Rent"
+                Field="@nameof(Rent.End)"
+                Caption="End time">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+<RentCreateModal @ref="_rentCreateModal" OnRentAdded="@HandleRentListChanged" />
+<RentUpdateModal @ref="_rentUpdateModal" RentToUpdate="_selectedRent" RentId="_selectedId" OnRentUpdated="@HandleRentListChanged" />
+
+@code {
+    private IEnumerable<Rent> _rents = [];
+    private IEnumerable<Client>? _clients;
+    private IEnumerable<Bike>? _bikes;
+    private int _selectedId;
+    private RentDto? _selectedRent;
+    private RentCreateModal _rentCreateModal = new();
+    private RentUpdateModal _rentUpdateModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshRentCollection();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OpenRentEditPageAsync(Rent context)
+    {
+        _selectedId = context.Id;
+        _selectedRent = new RentDto()
+            {
+                ClientId = context.ClientId,
+                BikeId = context.BikeId,
+                Begin = context.Begin,
+                End = context.End
+            };
+        await _rentUpdateModal.Show();
+    }
+
+    private async Task DeleteRentAsync(Rent context)
+    {
+        await BikeRentApi.DeleteRent(context.Id);
+        await RefreshRentCollection();
+    }
+
+    private async Task HandleRentListChanged()
+    {
+        await RefreshRentCollection();
+    }
+
+    private async Task OpenCreateModal() => await _rentCreateModal.Show();
+
+    private async Task RefreshRentCollection()
+    {
+        _rents = await BikeRentApi.GetAllRents();
+        _bikes = await BikeRentApi.GetAllBikes();
+        _clients = await BikeRentApi.GetAllClients();
+    }
+
+    private string GetClientName(int clientId)
+    {
+        return _clients?.FirstOrDefault(t => t.Id == clientId)?.FirstName ?? "Unknown";
+    }
+    private string GetBikeName(int bikeId)
+    {
+        return _bikes?.FirstOrDefault(t => t.Id == bikeId)?.Model ?? "Unknown";
+    }
+}

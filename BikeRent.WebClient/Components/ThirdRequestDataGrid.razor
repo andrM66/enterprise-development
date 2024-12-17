@@ -1,0 +1,41 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        Get total time every bike type have been being rented
+        <DataGrid TItem="TypeTimeDto"
+                  Data="_time"
+                  Responsive
+                  Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px"
+                                TItem="TypeTimeDto"
+                                Field="@nameof(TypeTimeDto.Name)"
+                                Caption="Bike Name">
+                </DataGridColumn>
+                <DataGridColumn TItem="TypeTimeDto"
+                                Field="@nameof(TypeTimeDto.Time)"
+                                Caption="Time">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+    private IEnumerable<TypeTimeDto> _time = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshBikeTypeCollection();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshBikeTypeCollection() => _time = await BikeRentApi.Request3();
+}

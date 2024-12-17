@@ -1,0 +1,107 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreatedModal">Create</Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="Client"
+                  Data="_clients"
+                  Responsive
+                  Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px"
+                                TItem="Client"
+                                Field="@nameof(Client.Id)"
+                                Caption="Actions">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Actions
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => OpenEditPageAsync(context)">
+                                    Edit
+                                </DropdownItem>
+                                <DropdownItem Clicked="() => DeleteClientAsync(context)">
+                                    Delete
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.FirstName)"
+                                Caption="First name">
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.SecondName)"
+                                Caption="Second name">
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.Patronymic)"
+                                Caption="Patronymic">
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.BirthDate)"
+                                Caption="BirthDate">
+                </DataGridColumn>
+                <DataGridColumn TItem="Client"
+                                Field="@nameof(Client.PhoneNumber)"
+                                Caption="Phone Number">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+<ClientCreateModal @ref="_clientCreateModal" OnClientAdded="@HandleClientListChanged"></ClientCreateModal>
+<ClientUpdateModal @ref="_clientUpdateModal" ClientToUpdate="_selectedClient" Id="_selectedId" OnClientUpdated="@HandleClientListChanged" />
+@code {
+    private IEnumerable<Client> _clients = [];
+    private int _selectedId;
+    private ClientDto? _selectedClient;
+    private ClientCreateModal _clientCreateModal = new();
+    private ClientUpdateModal _clientUpdateModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshClientCollection();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OpenEditPageAsync(Client context)
+    {
+        _selectedId = context.Id;
+        _selectedClient = new()
+            {
+                FirstName = context.FirstName,
+                SecondName = context.SecondName,
+                Patronymic = context.Patronymic,
+                BirthDate = context.BirthDate,
+                PhoneNumber = context.PhoneNumber
+            };
+        await _clientUpdateModal.Show();
+    }
+
+    private async Task DeleteClientAsync(Client context)
+    {
+        await BikeRentApi.DeleteClient(context.Id);
+        await RefreshClientCollection();
+    }
+
+    private async Task HandleClientListChanged()
+    {
+        await RefreshClientCollection();
+    }
+    private async Task RefreshClientCollection()
+    {
+        _clients = await BikeRentApi.GetAllClients();
+    }
+    private async Task OpenCreatedModal() => await _clientCreateModal.Show();
+
+    private async Task RefreshBikeTypeCollection() => _clients = await BikeRentApi.GetAllClients();
+}

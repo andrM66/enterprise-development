@@ -1,0 +1,131 @@
+﻿@inject IBikeRentApiWrapper BikeRentApi
+
+<Modal @ref="_rentModal">
+    <Alert Color="Color.Danger" @bind-Visible="@_isAlertVisible">
+        <AlertMessage>Empty</AlertMessage>
+    </Alert>
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Edit bike to bike type relation</ModalTitle>
+                <CloseButton Clicked="CloseRentModalAsync" />
+            </ModalHeader>
+
+            <ModalBody>
+                @if (RentToUpdate != null)
+                {
+                    <Field>
+                        <FieldLabel>Bike</FieldLabel>
+                        <Select TValue="int" @bind-SelectedValue="RentToUpdate!.BikeId">
+                            @if (_bikes != null)
+                            {
+                                @foreach (var bike in _bikes)
+                                {
+                                    <SelectItem Value="@bike.Id">@bike.Model</SelectItem>
+                                }
+                            }
+                        </Select>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Client</FieldLabel>
+                        <Select TValue="int" @bind-SelectedValue="RentToUpdate!.ClientId">
+                            @if (_clients != null)
+                            {
+                                @foreach (var client in _clients)
+                                {
+                                    <SelectItem Value="@client.Id">@client.FirstName</SelectItem>
+                                }
+                            }
+                        </Select>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Start time</FieldLabel>
+                        @if (RentToUpdate != null)
+                        {
+                            <InputDate @bind-Value="RentToUpdate.Begin" />
+                        }
+                    </Field>
+                    <Field>
+                        <FieldLabel>End time</FieldLabel>
+                        @if (RentToUpdate != null)
+                        {
+                            <InputDate @bind-Value="RentToUpdate.End" />
+                        }
+                    </Field>
+                }
+            </ModalBody>
+
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="CloseRentModalAsync">Cancel</Button>
+                <Button Color="Color.Primary" Clicked="UpdateRentAsync">Edit</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnRentUpdated { get; set; }
+    [Parameter]
+    public int RentId { get; set; }
+    [Parameter]
+    public RentDto? RentToUpdate { get; set; }
+
+    private IEnumerable<Client>? _clients;
+    private IEnumerable<Bike>? _bikes;
+    private Modal _rentModal = new();
+    private bool _isAlertVisible = false;
+
+    public async Task Show()
+    {
+        await TakeBikes();
+        await TakeClients();
+        await _rentModal.Show();
+    }
+
+    private async Task CloseRentModalAsync()
+    {
+        _isAlertVisible = false;
+        RentToUpdate = new();
+        await _rentModal.Hide();
+    }
+
+    private async Task UpdateRentAsync()
+    {
+        try
+        {
+            await BikeRentApi.PutRent(RentId, RentToUpdate!);
+            await CloseRentModalAsync();
+            await OnRentUpdated.InvokeAsync();
+        }
+        catch
+        {
+            _isAlertVisible = true;
+        }
+    }
+
+    private async Task TakeBikes()
+    {
+        _bikes = await BikeRentApi.GetAllBikes();
+        if (_bikes?.FirstOrDefault() is null)
+        {
+            RentToUpdate!.BikeId = 0;
+        }
+        else
+        {
+            RentToUpdate!.BikeId = _bikes.FirstOrDefault()!.Id;
+        }
+    }
+    private async Task TakeClients()
+    {
+        _clients = await BikeRentApi.GetAllClients();
+        if (_clients?.FirstOrDefault() is null)
+        {
+            RentToUpdate!.ClientId = 0;
+        }
+        else
+        {
+            RentToUpdate!.ClientId = _clients.FirstOrDefault()!.Id;
+        }
+    }
+}

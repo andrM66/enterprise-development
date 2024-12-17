@@ -22,4 +22,15 @@ public interface IBikeRentApiWrapper
     Task PutBikeType(int id, BikeTypeDto entity);
     Task PutClient(int id, ClientDto entity);
     Task PutRent(int id, RentDto entity);
+    Task<IEnumerable<Bike>> Request1();
+
+    Task<IEnumerable<Client>> Request2();
+
+    Task<IEnumerable<TypeTimeDto>> Request3();
+
+    Task<IEnumerable<Client>> Request4();
+
+    Task<IEnumerable<Bike>> Request5();
+
+    Task<IEnumerable<string>> Request6();
 }

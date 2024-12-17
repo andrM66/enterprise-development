@@ -17,7 +17,7 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
     /// </summary>
     /// <returns></returns>
     [HttpGet("sportBikes")]
-    public async Task<ActionResult<Bike>> GetSportBikes()
+    public async Task<ActionResult<IEnumerable<Bike>>> GetSportBikes()
     {
         var bikes = await bikeRepository.GetAllAsync();
         var types = await bikeTypeRepository.GetAllAsync();
@@ -37,7 +37,7 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
     /// </summary>
     /// <returns></returns>
     [HttpGet("mountainBikeClients")]
-    public async Task<ActionResult<Client>> GetMountainClients()
+    public async Task<ActionResult<IEnumerable<Client>>> GetMountainClients()
     {
         var clients = await clientRepository.GetAllAsync();
         var bikes = await bikeRepository.GetAllAsync();
@@ -62,7 +62,7 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
     /// </summary>
     /// <returns></returns>
     [HttpGet("typesTime")]
-    public async Task<ActionResult<TypeTimeDto>> GetAllTypesTime()
+    public async Task<ActionResult<IEnumerable<TypeTimeDto>>> GetAllTypesTime()
     {
         var bikes = await bikeRepository.GetAllAsync();
         var types = await bikeTypeRepository.GetAllAsync();
@@ -89,7 +89,7 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
     /// </summary>
     /// <returns></returns>
     [HttpGet("topClients")]
-    public async Task<ActionResult<Client>> GetTopClients()
+    public async Task<ActionResult<IEnumerable<Client>>> GetTopClients()
     {
         var rents = await rentRepository.GetAllAsync();
         var clients = await clientRepository.GetAllAsync();
