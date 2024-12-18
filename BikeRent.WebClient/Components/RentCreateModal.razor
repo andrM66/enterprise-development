@@ -38,11 +38,11 @@
                 </Field>
                 <Field>
                     <FieldLabel>Start time</FieldLabel>
-                    <DateEdit TValue="DateTimeOffset" @bind-date="@_newRent.Begin" InputMode="DateInputMode.DateTime" min="@DateTime.Now" />
+                    <DateEdit TValue="DateTimeOffset" @bind-date="@_newRent.Begin" InputMode="DateInputMode.DateTime" Min="@DateTime.Now" />
                 </Field>
                 <Field>
                     <FieldLabel>End time</FieldLabel>
-                    <DateEdit TValue="DateTimeOffset" @bind-date="@_newRent.End" InputMode="DateInputMode.DateTime"  min="@DateTime.Now" />
+                    <DateEdit TValue="DateTimeOffset" @bind-date="@_newRent.End" InputMode="DateInputMode.DateTime" Min="@DateTime.Now" />
                 </Field>
             </ModalBody>
 
@@ -59,7 +59,7 @@
     public EventCallback OnRentAdded { get; set; }
 
     private Modal _rentModal = new();
-    private RentDto _newRent = new();
+    private RentDto _newRent = new() { Begin = DateTime.Now, End = DateTime.Now};
     private IEnumerable<Bike>? _bikes;
     private IEnumerable<Client>? _clients;
     private bool _isAlertVisible = false;
