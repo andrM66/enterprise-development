@@ -124,7 +124,7 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
     /// </summary>
     /// <returns></returns>
     [HttpGet("topFiveBikes")]
-    public async Task<ActionResult<IEnumerable<Bike>>> GetTopBikes()
+    public async Task<ActionResult<IEnumerable<BikeCountDto>>> GetTopBikes()
     {
         var rents = await rentRepository.GetAllAsync();
         var bikes = await bikeRepository.GetAllAsync();
@@ -134,11 +134,11 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
              join bike in bikes on rent.BikeId equals bike.Id
              group new { rent, bike } by new { rent.BikeId, bike.Model, bike.Color } into newRents
              orderby newRents.Count() descending
-             select new
+             select new BikeCountDto
              {
-                 newRents.Key.BikeId,
-                 newRents.Key.Model,
-                 newRents.Key.Color,
+                 Id = newRents.Key.BikeId,
+                 Model = newRents.Key.Model,
+                 Color = newRents.Key.Color,
                  Count = newRents.Count(),
              }).Take(5).ToList();
         if (bikeRent == null)
@@ -152,18 +152,16 @@ public class RequestTaskController(IRepository<Client, int> clientRepository,
     /// </summary>
     /// <returns></returns>
     [HttpGet("rentStats")]
-    public async Task<ActionResult<IEnumerable<TimeSpan>>> GetMaxMinAvgTime()
+    public async Task<ActionResult<TimeStatDto>> GetMaxMinAvgTime()
     {
         var rents = await rentRepository.GetAllAsync();
 
-        var max = rents.Max(r => r.End - r.Begin).TotalSeconds;
-        var min = rents.Min(r => r.End - r.Begin).TotalSeconds;
+        var max = rents.Max(r => r.End - r.Begin);
+        var min = rents.Min(r => r.End - r.Begin);
         var avg = rents.Average(r => (r.End - r.Begin).TotalSeconds);
 
-        var maxTime = TimeSpan.FromSeconds(max);
-        var minTime = TimeSpan.FromSeconds(min);
         var avgTime = TimeSpan.FromSeconds(avg);
-        List<TimeSpan> res = [maxTime, minTime, avgTime];
+        TimeStatDto res = new() {Maximum = max, Minimum =  min, Average = avgTime };
         if (res == null)
         {
             return NotFound(res);

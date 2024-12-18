@@ -9,7 +9,7 @@
     </CardHeader>
     <CardBody>
         Get five bikes that have been rented most times
-        <DataGrid TItem="Bike"
+        <DataGrid TItem="BikeCountDto"
                   Data="_bikes"
                   Responsive
                   Striped>
@@ -37,7 +37,7 @@
 </Card>
 
 @code {
-    private IEnumerable<Bike> _bikes = [];
+    private IEnumerable<BikeCountDto> _bikes = [];
 
     protected override async Task OnInitializedAsync()
     {

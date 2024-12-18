@@ -30,7 +30,7 @@ public interface IBikeRentApiWrapper
 
     Task<IEnumerable<Client>> Request4();
 
-    Task<IEnumerable<Bike>> Request5();
+    Task<IEnumerable<BikeCountDto>> Request5();
 
-    Task<IEnumerable<string>> Request6();
+    Task<TimeStatDto> Request6();
 }

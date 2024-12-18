@@ -2,7 +2,7 @@
 
 public class BikeRentApiWrapper(IConfiguration configuration) : IBikeRentApiWrapper
 {
-    public readonly BikeRentNewApi _client = new(configuration["OpenApi:ServerUrl"], new HttpClient());
+    public readonly BikeRentApi _client = new(configuration["OpenApi:ServerUrl"], new HttpClient());
 
     public async Task<IEnumerable<Bike>> GetAllBikes() => [.. await _client.BikeAllAsync()];
     public async Task<IEnumerable<BikeType>> GetAllBikeTypes() => [.. await _client.BikeTypeAllAsync()];
@@ -37,7 +37,7 @@ public class BikeRentApiWrapper(IConfiguration configuration) : IBikeRentApiWrap
 
     public async Task<IEnumerable<Client>> Request4() => [.. await _client.TopClientsAsync()];
 
-    public async Task<IEnumerable<Bike>> Request5() => [.. await _client.TopFiveBikesAsync()];
+    public async Task<IEnumerable<BikeCountDto>> Request5() => [.. await _client.TopFiveBikesAsync()];
 
-    public async Task<IEnumerable<string>> Request6() => [.. await _client.RentStatsAsync()];
+    public async Task<TimeStatDto> Request6() => await _client.RentStatsAsync();
 }

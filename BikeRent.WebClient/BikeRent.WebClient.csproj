@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <OpenApiReference Include="Api\newswagger.json" ClassName="BikeRentNewApi" CodeGenerator="NSwagCSharp" />
+    <OpenApiReference Include="Api\newswagger.json" ClassName="BikeRentApi" CodeGenerator="NSwagCSharp" />
   </ItemGroup>
 
 </Project>

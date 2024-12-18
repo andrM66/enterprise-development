@@ -42,14 +42,14 @@
                         <FieldLabel>Start time</FieldLabel>
                         @if (RentToUpdate != null)
                         {
-                            <InputDate @bind-Value="RentToUpdate.Begin" />
+                            <DateEdit TValue="DateTimeOffset" @bind-date="@RentToUpdate.Begin" InputMode="DateInputMode.DateTime" min="@RentToUpdate.Begin" />
                         }
                     </Field>
                     <Field>
                         <FieldLabel>End time</FieldLabel>
                         @if (RentToUpdate != null)
                         {
-                            <InputDate @bind-Value="RentToUpdate.End" />
+                            <DateEdit TValue="DateTimeOffset" @bind-date="@RentToUpdate.End" InputMode="DateInputMode.DateTime" min="@RentToUpdate.Begin" />
                         }
                     </Field>
                 }

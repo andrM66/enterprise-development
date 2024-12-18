@@ -38,11 +38,11 @@
                 </Field>
                 <Field>
                     <FieldLabel>Start time</FieldLabel>
-                    <InputDate @bind-Value="_newRent.Begin"></InputDate>
+                    <DateEdit TValue="DateTimeOffset" @bind-date="@_newRent.Begin" InputMode="DateInputMode.DateTime" min="@DateTime.Now" />
                 </Field>
                 <Field>
                     <FieldLabel>End time</FieldLabel>
-                    <InputDate @bind-Value="_newRent.End"></InputDate>
+                    <DateEdit TValue="DateTimeOffset" @bind-date="@_newRent.End" InputMode="DateInputMode.DateTime"  min="@DateTime.Now" />
                 </Field>
             </ModalBody>
 

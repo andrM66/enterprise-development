@@ -9,15 +9,25 @@
     </CardHeader>
     <CardBody>
         Get maximum, minimum and average rental time
-        <DataGrid TItem="string"
-                  Data="_time"
-                  Responsive
-                  Striped>
+        <DataGrid TItem="TimeStatDto"
+            Data="_time"
+        Responsive
+        Striped>
             <DataGridColumns>
                 <DataGridColumn Width="150px"
-                                TItem="string"
-                                Field="@nameof(_time)"
-                                Caption="Time stats">
+                TItem="TimeStatDto"
+                Field="@nameof(TimeStatDto.Maximum)"
+                Caption="Max">
+                </DataGridColumn>
+                <DataGridColumn Width="150px"
+                TItem="TimeStatDto"
+                                Field="@nameof(TimeStatDto.Minimum)"
+                Caption="Min">
+                </DataGridColumn>
+                <DataGridColumn Width="150px"
+                                TItem="TimeStatDto"
+                                Field="@nameof(TimeStatDto.Average)"
+                Caption="Max">
                 </DataGridColumn>
             </DataGridColumns>
         </DataGrid>
@@ -25,7 +35,7 @@
 </Card>
 
 @code {
-    private IEnumerable<string> _time = [];
+    private IEnumerable<TimeStatDto>? _time;
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,5 +43,5 @@
         await base.OnInitializedAsync();
     }
 
-    private async Task RefreshBikeTypeCollection() => _time = await BikeRentApi.Request6();
+    private async Task RefreshBikeTypeCollection() => _time = [ await BikeRentApi.Request6()];
 }
