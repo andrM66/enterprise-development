@@ -2,7 +2,7 @@
 
 public class BikeRentApiWrapper(IConfiguration configuration) : IBikeRentApiWrapper
 {
-    public readonly BikeRentApi _client = new(configuration["OpenApi:ServerUrl"], new HttpClient());
+    public readonly BikeRentNewApi _client = new(configuration["OpenApi:ServerUrl"], new HttpClient());
 
     public async Task<IEnumerable<Bike>> GetAllBikes() => [.. await _client.BikeAllAsync()];
     public async Task<IEnumerable<BikeType>> GetAllBikeTypes() => [.. await _client.BikeTypeAllAsync()];

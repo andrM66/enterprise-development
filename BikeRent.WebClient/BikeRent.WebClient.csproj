@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Api\newswagger.json" />
     <Content Remove="Api\swagger.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <OpenApiReference Include="Api\swagger.json" ClassName="BikeRentApi" CodeGenerator="NSwagCSharp" />
+    <None Include="Api\swagger.json" ClassName="BikeRentApi" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +40,10 @@
 
   <ItemGroup>
     <Folder Include="Ui\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <OpenApiReference Include="Api\newswagger.json" ClassName="BikeRentNewApi" CodeGenerator="NSwagCSharp" />
   </ItemGroup>
 
 </Project>
